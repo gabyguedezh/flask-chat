@@ -6,6 +6,12 @@ app = Flask(__name__)
 #we'll remove the var below from global and into our get_all_messages function
 # messages = []
 
+#Refactoring - Concentrate the process of writing to a file in a function
+def write_to_file(filename, data):
+    """Handle the process of writing data to a file"""
+    with open(filename, "a") as file:
+        file.writelines(data)
+
 # #MAKING OF FUNCTION
 # def add_messages(username, message):
 #     """Add messages to the 'messages' list"""
@@ -25,17 +31,25 @@ app = Flask(__name__)
 #     now = datetime.now().strftime("%H:%M:%S")
 #     messages_dict = {"timestamp": now, "from": username, "message": message}
 #     messages.append(messages_dict)
-
+#And, then, we move things around and delete variables no longer needed...
+# def add_messages(username, message):
+#     """Add messages to the `messages` list"""
+#     now = datetime.now().strftime("%H:%M:%S")
+#     messages_dict = {"timestamp": now, "from": username, "message": message}
+#     with open("data/messages.txt", "a") as chat_list:
+#         chat_list.writelines("({0}) {1} - {2}\n".format(
+#         messages_dict["timestamp"], 
+#         messages_dict["from"].title(), 
+#         messages_dict["message"]))
+#Once we've created our write_to_file function, we refactor this function as well
+        
 #Just function
 def add_messages(username, message):
-    """Add messages to the `messages` list"""
-    now = datetime.now().strftime("%H:%M:%S")
-    messages_dict = {"timestamp": now, "from": username, "message": message}
-    with open("data/messages.txt", "a") as chat_list:
-        chat_list.writelines("({0}) {1} - {2}\n".format(
-        messages_dict["timestamp"], 
-        messages_dict["from"].title(), 
-        messages_dict["message"]))
+    """Add messages to the `messages` text file"""
+    write_to_file("data/messages.txt", "({0}) {1} - {2}\n".format(
+            datetime.now().strftime("%H:%M:%S"),
+            username.title(),
+            message))
 
 # #MAKING OF FUNCTION
 # #We need a function to get all the messages, we'll use it later to display them
@@ -71,14 +85,24 @@ def get_all_messages():
 #     # return "To send a message use /USERNAME/MESSAGE"
 #     #After we've created our templates folder and index.html file, we replace
 #     return render_template("index.html")
+# So, before refactoring, our function will be looking like this:
+# @app.route('/', methods=["GET", "POST"])
+# def index():
+#     """Main page with instructions"""
+#     if request.method == "POST":
+#         with open("data/users.txt", "a") as user_list:
+#             user_list.writelines(request.form["username"] + "\n")
+#         return redirect(request.form["username"])
+#     return render_template("index.html")
+#Then, we refactor after creating the write_to_file function...
 
 #Just the function
 @app.route('/', methods=["GET", "POST"])
 def index():
     """Main page with instructions"""
+    # Handle POST request
     if request.method == "POST":
-        with open("data/users.txt", "a") as user_list:
-            user_list.writelines(request.form["username"] + "\n")
+        write_to_file("data/users.txt", request.form["username"] + "\n")
         return redirect(request.form["username"])
     return render_template("index.html")
 
