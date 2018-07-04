@@ -3,7 +3,8 @@ from datetime import datetime
 from flask import Flask, redirect, render_template, request
 
 app = Flask(__name__)
-messages = []
+#we'll remove the var below from global and into our get_all_messages function
+# messages = []
 
 # #MAKING OF FUNCTION
 # def add_messages(username, message):
@@ -18,13 +19,23 @@ messages = []
 #     # messages.append("({}) {}: {}".format(now, username, message))
 #     #After we've create a dictionary, we change the code above for the following
 #     messages.append(message_dict)
+#So, at this point (before creating messages.txt to store our chats) we have:
+# def add_messages(username, message):
+#     """Add messages to the `messages` list"""
+#     now = datetime.now().strftime("%H:%M:%S")
+#     messages_dict = {"timestamp": now, "from": username, "message": message}
+#     messages.append(messages_dict)
 
 #Just function
 def add_messages(username, message):
     """Add messages to the `messages` list"""
     now = datetime.now().strftime("%H:%M:%S")
     messages_dict = {"timestamp": now, "from": username, "message": message}
-    messages.append(messages_dict)
+    with open("data/messages.txt", "r") as chat_list:
+        chat_list.writelines("({0}) {1} - {2}\n".format(
+        messages_dict["timestamp"], 
+        messages_dict["from"].title(), 
+        messages_dict["message"]))
 
 # #MAKING OF FUNCTION
 # #We need a function to get all the messages, we'll use it later to display them
@@ -39,6 +50,9 @@ def add_messages(username, message):
 #Just function
 def get_all_messages():
     """Get all of the messages and separate them by a `br`"""
+    messages = []
+    with open("data/messages.txt", "r") as chat_messages:
+        messages = chat_messages.readlines()
     return messages
 
 # #MAKING OF FUNCTION
