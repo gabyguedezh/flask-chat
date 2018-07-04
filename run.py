@@ -1,17 +1,31 @@
 import os
+from datetime import datetime
 from flask import Flask, redirect
 
 app = Flask(__name__)
 messages = []
 
 def add_messages(username, message):
-    """Add messagesto the messages list"""
-    messages.append("{}: {}".format(username, message))
+    """Add messages to the 'messages' list"""
+    #We will create a new variable called now to be able to use datetime here
+    now = datetime.now().strftime("%H:%M:%S")
+    #We will create a dictionary in order to be able to access more of our data
+    message_dict = {"timestamp": now, "from": username, "message": message}
+    # messages.append("{}: {}".format(username, message))
+    #After we've imported datetime and added it to this function, we change the 
+    #code commented above for the following...
+    # messages.append("({}) {}: {}".format(now, username, message))
+    #After we've create a dictionary, we change the code above for the following
+    messages.append(message_dict)
 
 #We need a function to get all the messages, we'll use it later to display them
 def get_all_messages():
-     """Get all of the messages and separate them by a 'br'"""
-     return "<br>".join(messages)
+    """Get all of the messages and separate them by a 'br'"""
+    #return "<br>".join(messages)
+    #Once we've changed our list for a dictionary un add_messages, we change the
+    #code above to return the dictionary, otherwise, we'd be trying to return a
+    #list, but our chat is now a dictionary so we'd get an error
+    return messages
 
 @app.route("/")
 def index():
