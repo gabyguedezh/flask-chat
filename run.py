@@ -67,7 +67,25 @@ def index():
             user_list.writelines(request.form["username"] + "\n")
         return redirect(request.form["username"])
     return render_template("index.html")
-    
+
+#MAKING OF FUNCTION
+# # #The next thing we need is a route that takes the username and message
+# @app.route("/<username>/<message>")
+# def send_message(username, message):
+#     """Create a new message and redirect it back to he chat page"""
+#     #We've added the add_messages function
+#     add_messages(username, message)
+#     #Intead of returning the string as commented above, we can use redirect...
+#     # return "{0}: {1}".format(username, message)
+#     return redirect(username)
+
+#Just function
+
+@app.route("/<username>/<message>")
+def send_message(username, message):
+    """Create a new message and redirect it back to he chat page"""
+    add_messages(username, message)
+    return redirect(username)
 
 # #MAKING OF FUNCTION
 # #The next route will be a personalised homepage for each user
@@ -79,22 +97,16 @@ def index():
 #     #Once we have out get_all_messages function, we comment the above and use it
 #     return "<h1>Welcome, {0}</h1> {1}".format(username, get_all_messages())
 #     #Notice how you can give a function as an argument here
-    
-# #The next thing we need is a route that takes the username and message
-# @app.route("/<username>/<message>")
-# def send_message(username, message):
-#     """Create a new message and redirect it back to he chat page"""
-#     #We've added the add_messages function
-#     add_messages(username, message)
-#     #Intead of returning the string as commented above, we can use redirect...
-#     # return "{0}: {1}".format(username, message)
-#     return redirect(username)
+#After we've created our chat.html file, we will need to change this function
+#and add a variable to store our messages, as well as update our return
 
 #Just the function
 @app.route('/<username>')
 def user(username):
     """Display chat messages"""
-    return "<h1>Welcome, {0}</h1> {1}".format(username, messages)
+    messages = get_all_messages()
+    return render_template("chat.html", 
+                            username=username, chat_messages=messages)
 
 #The code "os.getenv" does the same as "os.environ.get('IP')" but it is shorter
 app.run(host=os.getenv("IP"), 
