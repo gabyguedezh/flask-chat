@@ -31,7 +31,7 @@ def add_messages(username, message):
     """Add messages to the `messages` list"""
     now = datetime.now().strftime("%H:%M:%S")
     messages_dict = {"timestamp": now, "from": username, "message": message}
-    with open("data/messages.txt", "r") as chat_list:
+    with open("data/messages.txt", "a") as chat_list:
         chat_list.writelines("({0}) {1} - {2}\n".format(
         messages_dict["timestamp"], 
         messages_dict["from"].title(), 
