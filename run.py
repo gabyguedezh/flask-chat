@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from flask import Flask, redirect
+from flask import Flask, redirect, render_template, request
 
 app = Flask(__name__)
 messages = []
@@ -27,10 +27,21 @@ def get_all_messages():
     #list, but our chat is now a dictionary so we'd get an error
     return messages
 
-@app.route("/")
+# @app.route("/")
+#In order to add a form, we replace the commented code above for the following
+@app.route("/", methods=["GET", "POST"])
 def index():
     """Main page with instructions"""
-    return "To send a message use /USERNAME/MESSAGE"
+    #We will add a form to request the username
+    if request.method == "POST":
+        # print(request.form)
+        #After we've created users.txt, we replace the commented code above...
+        with open("data/users.txt", "a") as user_list:
+            user_list.write(request.form["username"])
+        return redirect(request.form["username"])
+    # return "To send a message use /USERNAME/MESSAGE"
+    #After we've created our templates folder and index.html file, we replace
+    return render_template("index.html")
 
 #The next route will be a personalised homepage for each user
 #depending on their URL
